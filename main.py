@@ -89,8 +89,6 @@ def asignar_palitos_rojos(piramide_con_atributos: list[list[dict]], piramide: li
         if palito_rojo not in palitos_rojos:
             palitos_rojos.append(palito_rojo)
 
-    print(palitos_rojos)
-
     contador_palitos: int = 0
     for fila in range(len(piramide_con_atributos)):
         for palito in range(len(piramide[fila])):
@@ -99,6 +97,30 @@ def asignar_palitos_rojos(piramide_con_atributos: list[list[dict]], piramide: li
                 piramide_con_atributos[fila][palito]['es_rojo'] = True
 
     return piramide_con_atributos
+
+def eliminar_palito(fila: int, columna: int, piramide_con_atributos: list[list[dict]], piramide: list[list[str]]) -> bool:
+    """
+        PRE: Recibe la pirámide, sus atributos y las coordenadas donde se quiere eliminar el palito
+        POST: Devuelve un booleano que indica si se eliminó correctamente el palito
+    """
+    try:
+        if not piramide_con_atributos[fila][columna]['fue_eliminado']:
+            if not piramide_con_atributos[fila][columna]['esta_congelado']:
+                piramide_con_atributos[fila][columna]['fue_eliminado'] = True
+                piramide[fila][columna] = ' '
+                return True
+            else:
+                print('No se puede eliminar el palito seleccionado, está congelado!')
+                return False
+        else:
+            print('El palito en las coordenadas ya fue eliminado. Por favor, seleccione uno válido')
+            return False
+    except IndexError:
+        print('La posición seleccionada no es válida.')
+        return False
+
+
+
 
 def main() -> None:
 
@@ -109,10 +131,16 @@ def main() -> None:
 
 
     piramide: list[list[str]] = armar_piramide(13)
+    imprimir_piramide(piramide)
+
     piramide_con_atributos: list[list[dict]] = definir_atributos_iniciales(piramide)
     piramide_con_atributos = asignar_palitos_rojos(piramide_con_atributos, piramide)
-
+    print(piramide_con_atributos)
+    eliminar_palito(2, 2, piramide_con_atributos, piramide)
     imprimir_piramide(piramide)
+    eliminar_palito(0, 1, piramide_con_atributos, piramide)
+    imprimir_piramide(piramide)
+
     print(piramide_con_atributos)
 
 
