@@ -1,3 +1,5 @@
+import random
+
 def imprimir_piramide(piramide: list[list[str]]) -> None:
     """
         PRE: Recibe la lista de palitos que forman la pirámide
@@ -73,7 +75,28 @@ def contar_palitos(piramide: list[list[str]]) -> int:
 
     return contador_palitos
 
+def asignar_palitos_rojos(piramide_con_atributos: list[list[dict]], piramide: list[list[str]]) -> list[list[dict]]:
+    """
+            PRE: Recibe la pirámide y sus atributos con los valores por default
+            POST: Modifica los atributos en la pirámide para setear los que corresponden a los palitos rojos
+    """
+    cantidad_palitos_total: int = contar_palitos(piramide)
+    cantidad_palitos_rojos: int = round(cantidad_palitos_total * 0.3)
+    palitos_rojos: list[int] = []
 
+    while(len(palitos_rojos) < cantidad_palitos_rojos):
+        palito_rojo: int = random.randint(1, cantidad_palitos_total)
+        if palito_rojo not in palitos_rojos:
+            palitos_rojos.append(palito_rojo)
+
+    contador_palitos: int = 0
+    for fila in piramide_con_atributos:
+        for palito in fila:
+            contador_palitos += 1
+            if contador_palitos in palitos_rojos:
+                piramide_con_atributos[fila][palito]['es_rojo'] = True
+
+    return piramide_con_atributos
 
 def main() -> None:
 
