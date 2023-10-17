@@ -69,7 +69,7 @@ def contar_palitos(piramide: list[list[str]]) -> int:
     """
     contador_palitos: int = 0
     for fila in piramide:
-        for palito in piramide:
+        for palito in fila:
             if palito == '|':
                 contador_palitos += 1
 
@@ -89,9 +89,11 @@ def asignar_palitos_rojos(piramide_con_atributos: list[list[dict]], piramide: li
         if palito_rojo not in palitos_rojos:
             palitos_rojos.append(palito_rojo)
 
+    print(palitos_rojos)
+
     contador_palitos: int = 0
-    for fila in piramide_con_atributos:
-        for palito in fila:
+    for fila in range(len(piramide_con_atributos)):
+        for palito in range(len(piramide[fila])):
             contador_palitos += 1
             if contador_palitos in palitos_rojos:
                 piramide_con_atributos[fila][palito]['es_rojo'] = True
@@ -108,9 +110,10 @@ def main() -> None:
 
     piramide: list[list[str]] = armar_piramide(13)
     piramide_con_atributos: list[list[dict]] = definir_atributos_iniciales(piramide)
+    piramide_con_atributos = asignar_palitos_rojos(piramide_con_atributos, piramide)
 
     imprimir_piramide(piramide)
-    print(piramide_con_atributos[0][0])
+    print(piramide_con_atributos)
 
 
 main()
