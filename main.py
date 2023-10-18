@@ -129,7 +129,7 @@ def reacomodar_palitos(palitos_eliminados: list[list[int]], piramide_con_atribut
                        piramide: list[list[str]]) -> tuple[list[list[dict]], list[list[str]]]:
     """
         PRE: Recibe las coordenadas de los palitos eliminados, la pirámide y sus atributos
-        POST: Devuelve la pirámide reacomodada y sus atributos en una tupla, rellenando las filas inferiores
+        POST: Devuelve en una tupla la pirámide reacomodada, rellenando las filas inferiores, y sus nuevos atributos
     """
     for eliminado in palitos_eliminados:
         continuar: bool = True
@@ -137,11 +137,11 @@ def reacomodar_palitos(palitos_eliminados: list[list[int]], piramide_con_atribut
             for palito in range(len(piramide[fila])):
                 if piramide[fila][palito] == '|' and fila <= eliminado[0] and continuar:
 
-                    # Relleno lugar del palito eliminado, también sus atributos con los valores del nuevo palito
+                    # Relleno lugar del palito eliminado, también copio los atributos con los valores del nuevo palito
                     piramide[eliminado[0]][eliminado[1]] = '|'
                     piramide_con_atributos[eliminado[0]][eliminado[1]] = piramide_con_atributos[fila][palito].copy()
-                    # Elimino el palito superior. No utilizo el método eliminar_palito ya que no considero si está
-                    # congelado y además le tengo que setear los valores por default
+                    # Elimino el palito superior. No utilizo el método eliminar_palito ya que en este caso no considero
+                    # si está congelado y además le seteo los valores por default
                     piramide[fila][palito] = ' '
                     piramide_con_atributos[fila][palito]['es_rojo'] = False
                     piramide_con_atributos[fila][palito]['esta_congelado'] = False
@@ -152,6 +152,38 @@ def reacomodar_palitos(palitos_eliminados: list[list[int]], piramide_con_atribut
                     continuar = False
 
     return piramide_con_atributos, piramide
+
+def agregar_palitos(piramide_con_atributos: list[list[dict]], piramide: list[list[str]]) -> tuple[list[list[dict]], list[list[str]]]:
+    """
+        PRE: Recibe las pirámides a modificar
+        POST: Devuelve en una tupla las pirámides con los palitos agregados
+    """
+    opcion_invalida: bool = True
+    palitos_a_agregar: int = 0
+
+    while opcion_invalida:
+        try:
+            palitos_a_agregar = int(input("Ingrese la cantidad de palitos a agregar: "))
+            if palitos_a_agregar < 1:
+                print('La cantidad ingresada no es válida. Debe ser un número entero mayor o igual a uno')
+            else:
+                opcion_invalida = False
+        except ValueError:
+            print('Debe ingresar un número entero mayor o igual a uno')
+
+    palitos_agregados: int = 0
+    for fila in range(len(piramide) - 1, -1, -1):
+        for palito in range(len(piramide[fila]) - 1, -1, -1):
+            if piramide[fila][palito] == ' ' and palitos_agregados < palitos_a_agregar:
+                piramide[fila][palito] = '|'
+                piramide_con_atributos[fila][palito]['fue_eliminado'] = False
+                palitos_agregados += 1
+    print(f'Se agregaron {palitos_agregados} palitos a la pirámide')
+    imprimir_piramide(piramide)
+
+    return piramide_con_atributos, piramide
+
+
 
 
 def main() -> None:
@@ -171,7 +203,7 @@ def main() -> None:
     imprimir_piramide(piramide)
     reacomodar_palitos([[2, 2]], piramide_con_atributos, piramide)
     imprimir_piramide(piramide)
-
+    agregar_palitos(piramide_con_atributos, piramide)
 
     print(piramide_con_atributos)
 
