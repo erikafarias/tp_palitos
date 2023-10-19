@@ -4,7 +4,7 @@ def crear_jugadores(cantidad_jugadores) -> list[dict]:
     jugadores: list[dict] = []
     jugador: dict = {'palitos_retirados': 0, 'pierde_turno': False, 'es_maquina': True}
 
-    for i in range(cantidad_jugadores+1):
+    for i in range(cantidad_jugadores):
         jugadores.append(jugador.copy())
 
     jugadores[0]['es_maquina'] = False
@@ -307,6 +307,7 @@ def main() -> None:
         try:
             cantidad_jugadores: int = int(input('Para comenzar debe seleccionar la cantidad de jugadores (controlados por '
                                                 'la máquina) con los cuales se enfrentará: '))
+            cantidad_jugadores += 1
             if cantidad_jugadores <= 0 or cantidad_jugadores > 8:
                 print('Debe seleccionar una cantidad de jugadores mayor o igual a 1 y menor o igual a 8')
             else:
@@ -317,7 +318,25 @@ def main() -> None:
     jugadores: list[dict] = crear_jugadores(cantidad_jugadores)
     print(jugadores)
 
-    #TODO: Armar piramide preguntando si juega con cantidad minima o ingresa nuevo valor
+    continuar: bool = True
+    while continuar:
+        cantidad_palitos_minima: int = round(((cantidad_jugadores + 2) * (cantidad_jugadores * 3)) / 2)
+        try:
+            print(f'Puede jugar con la cantidad mínima de palitos o elegir una nueva. '
+                  f'Si desea elegir la cantidad, ingrese el número deseado, el mismo se ajustará '
+                  f'para formar una pirámide perfecta. De lo contrario, ingrese {cantidad_palitos_minima}')
+            cantidad_palitos_inicial = int(input('Por favor, ingrese la cantidad de palitos con la que desea jugar: '))
+            if cantidad_palitos_minima > cantidad_palitos_inicial:
+                print(f'Debe seleccionar una cantidad mayor o igual a {cantidad_palitos_minima}')
+            else:
+                continuar = False
+        except ValueError:
+            print(f'Debe ingresar un número entero, mayor o igual a {cantidad_palitos_minima}')
+
+        piramide = armar_piramide(cantidad_palitos_inicial)
+        imprimir_piramide(piramide)
+        piramide_con_atributos = definir_atributos_iniciales(piramide)
+
 
 
 main()
