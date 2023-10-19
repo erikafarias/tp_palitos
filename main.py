@@ -1,5 +1,17 @@
 import random
 
+def crear_jugadores(cantidad_jugadores) -> list[dict]:
+    jugadores: list[dict] = []
+    jugador: dict = {'palitos_retirados': 0, 'pierde_turno': False, 'es_maquina': False}
+
+    for i in range(cantidad_jugadores):
+        jugadores.append(jugador)
+
+    jugadores[0]['es_maquina'] = True
+
+    return jugadores
+
+
 
 def imprimir_piramide(piramide: list[list[str]]) -> None:
     """
@@ -190,6 +202,10 @@ def agregar_palitos(piramide_con_atributos: list[list[dict]], piramide: list[lis
 
 
 def congelar_palitos(piramide_con_atributos: list[list[dict]], piramide: list[list[str]]) -> tuple[list[list[dict]], list[list[str]]]:
+    """
+        PRE: Recibe las pirámides a modificar
+        POST: Devuelve las pirámides con el 20% de los palitos congelados
+    """
     cantidad_palitos: int = contar_palitos(piramide)
     porcentaje: int = round(cantidad_palitos * 0.2)
     palitos_a_congelar = porcentaje if porcentaje >= 1 else 1
@@ -214,6 +230,11 @@ def congelar_palitos(piramide_con_atributos: list[list[dict]], piramide: list[li
 
 
 def eliminar_fila(piramide_con_atributos: list[list[dict]], piramide: list[list[str]], jugador: dict):
+    """
+        PRE: Recibe las pirámides a modificar
+        POST: Luego de pedir un número de fila, elimina la misma y devuelve las pirámides modificadas
+    """
+    #TODO: agregar logica de cantidad de palitos eliminada por el jugador
     fila: int = 0
     if not jugador['es_maquina']:
         while opcion_invalida:
@@ -272,6 +293,28 @@ def main() -> None:
     agregar_palitos(piramide_con_atributos, piramide, jugadores[1])
 
     print(piramide_con_atributos)
+
+    ############################################################################
+    piramide: list[list[str]] = []
+    piramide_con_atributos: list[list[dict]] = []
+    #jugadores: list[dict] = []
+    cantidad_palitos_inicial: int = 0
+    opcion_invalida: bool = True
+    cantidad_jugadores: int = 0
+
+    print(f'Bienvenido al juego "estos palitos son un chino".')
+    while opcion_invalida:
+        try:
+            cantidad_jugadores: int = int(input('Para comenzar debe seleccionar la cantidad de jugadores (controlados por '
+                                                'la máquina) con los cuales se enfrentará: '))
+            if cantidad_jugadores <= 0 or cantidad_jugadores > 8:
+                print('Debe seleccionar una cantidad de jugadores mayor o igual a 1 y menor o igual a 8')
+            else:
+                opcion_invalida: False
+        except ValueError:
+            print('Debe ingresar un número entero, mayor o igual a 1 y menor o igual a 8')
+
+    jugadores: list[dict] = crear_jugadores(cantidad_jugadores)
 
 
 main()
