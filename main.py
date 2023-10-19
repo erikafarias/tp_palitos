@@ -213,6 +213,36 @@ def congelar_palitos(piramide_con_atributos: list[list[dict]], piramide: list[li
     return piramide_con_atributos, piramide
 
 
+def eliminar_fila(piramide_con_atributos: list[list[dict]], piramide: list[list[str]], jugador: dict):
+    fila: int = 0
+    if not jugador['es_maquina']:
+        while opcion_invalida:
+            try:
+                fila = int(input("Ingrese la fila que desea eliminar (comienza en cero): "))
+                contador: int = 0
+                for palito in range(len(piramide[fila])):
+                    if piramide[fila][palito] == '|' and not piramide_con_atributos[fila][palito]['esta_congelado']:
+                        contador += 1
+                if contador < 1:
+                    print('La fila ingresada no es válida')
+                else:
+                    opcion_invalida = False
+
+            except ValueError:
+                print('Debe ingresar un número entero, mayor o igual a cero')
+    else:
+        fila = random.randint(0, len(piramide)-1)
+        print(f"Ingrese la fila que desea eliminar (comienza en cero): {fila}")
+
+    for palito in range(len(piramide[fila])):
+        if not piramide_con_atributos[fila][palito]['esta_congelado']:
+            piramide[fila][palito] = ' '
+            piramide_con_atributos[fila][palito]['fue_eliminado'] = True
+        else:
+            print(f'El palito en la posición [{fila}, {palito}] no se puede eliminar porque está congelado')
+
+    return piramide_con_atributos, piramide
+
 def main() -> None:
     # piramide = [['|'], ['|', '|'], ['|', '|', '|']]
     # piramide2 = [[' '], ['|', '|'], ['|', '|', '|']]
