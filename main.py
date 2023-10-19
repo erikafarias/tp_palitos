@@ -136,7 +136,6 @@ def reacomodar_palitos(palitos_eliminados: list[list[int]], piramide_con_atribut
         for fila in range(len(piramide)):
             for palito in range(len(piramide[fila])):
                 if piramide[fila][palito] == '|' and fila <= eliminado[0] and continuar:
-
                     # Relleno lugar del palito eliminado, también copio los atributos con los valores del nuevo palito
                     piramide[eliminado[0]][eliminado[1]] = '|'
                     piramide_con_atributos[eliminado[0]][eliminado[1]] = piramide_con_atributos[fila][palito].copy()
@@ -153,7 +152,9 @@ def reacomodar_palitos(palitos_eliminados: list[list[int]], piramide_con_atribut
 
     return piramide_con_atributos, piramide
 
-def agregar_palitos(piramide_con_atributos: list[list[dict]], piramide: list[list[str]], jugador: dict) -> tuple[list[list[dict]], list[list[str]]]:
+
+def agregar_palitos(piramide_con_atributos: list[list[dict]], piramide: list[list[str]], jugador: dict) -> tuple[
+    list[list[dict]], list[list[str]]]:
     """
         PRE: Recibe las pirámides a modificar
         POST: Devuelve en una tupla las pirámides con los palitos agregados
@@ -188,13 +189,35 @@ def agregar_palitos(piramide_con_atributos: list[list[dict]], piramide: list[lis
     return piramide_con_atributos, piramide
 
 
+def congelar_palitos(piramide_con_atributos: list[list[dict]], piramide: list[list[str]]) -> tuple[list[list[dict]], list[list[str]]]:
+    cantidad_palitos: int = contar_palitos(piramide)
+    porcentaje: int = round(cantidad_palitos * 0.2)
+    palitos_a_congelar = porcentaje if porcentaje >= 1 else 1
+
+    palitos_congelados: list[int] = []
+
+    while (len(palitos_congelados) < palitos_a_congelar):
+        palito_congelado: int = random.randint(1, cantidad_palitos)
+        if palito_congelado not in palitos_congelados:
+            palitos_congelados.append(palito_congelado)
+
+    contador_palitos: int = 0
+    for fila in range(len(piramide_con_atributos)):
+        for palito in range(len(piramide[fila])):
+            contador_palitos += 1
+            if contador_palitos in palitos_congelados:
+                piramide_con_atributos[fila][palito]['esta_congelado'] = True
+                piramide_con_atributos[fila][palito]['contador_congelado'] += 3
+
+
+    return piramide_con_atributos, piramide
 
 
 def main() -> None:
     # piramide = [['|'], ['|', '|'], ['|', '|', '|']]
     # piramide2 = [[' '], ['|', '|'], ['|', '|', '|']]
     # piramide3 = [[' '], ['|', ' '], ['|', '|', '|']]
-    #jugadores: {list[dict[dict]]} = [
+    # jugadores: {list[dict[dict]]} = [
     # {'0': {
     #   palitos_retirados: 0,
     #   pierde_turno: False,
@@ -203,7 +226,7 @@ def main() -> None:
     # }]
 
     jugadores: list[dict] = [{'palitos_retirados': 0, 'pierde_turno': False, 'es_maquina': False},
-                                {'palitos_retirados': 0, 'pierde_turno': False, 'es_maquina': True}]
+                             {'palitos_retirados': 0, 'pierde_turno': False, 'es_maquina': True}]
     piramide: list[list[str]] = armar_piramide(13)
     imprimir_piramide(piramide)
 
