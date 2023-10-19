@@ -153,7 +153,7 @@ def reacomodar_palitos(palitos_eliminados: list[list[int]], piramide_con_atribut
 
     return piramide_con_atributos, piramide
 
-def agregar_palitos(piramide_con_atributos: list[list[dict]], piramide: list[list[str]]) -> tuple[list[list[dict]], list[list[str]]]:
+def agregar_palitos(piramide_con_atributos: list[list[dict]], piramide: list[list[str]], jugador: dict) -> tuple[list[list[dict]], list[list[str]]]:
     """
         PRE: Recibe las pirámides a modificar
         POST: Devuelve en una tupla las pirámides con los palitos agregados
@@ -161,15 +161,19 @@ def agregar_palitos(piramide_con_atributos: list[list[dict]], piramide: list[lis
     opcion_invalida: bool = True
     palitos_a_agregar: int = 0
 
-    while opcion_invalida:
-        try:
-            palitos_a_agregar = int(input("Ingrese la cantidad de palitos a agregar: "))
-            if palitos_a_agregar < 1:
-                print('La cantidad ingresada no es válida. Debe ser un número entero mayor o igual a uno')
-            else:
-                opcion_invalida = False
-        except ValueError:
-            print('Debe ingresar un número entero mayor o igual a uno')
+    if not jugador['es_maquina']:
+        while opcion_invalida:
+            try:
+                palitos_a_agregar = int(input("Ingrese la cantidad de palitos a agregar: "))
+                if palitos_a_agregar < 1:
+                    print('La cantidad ingresada no es válida. Debe ser un número entero mayor o igual a uno')
+                else:
+                    opcion_invalida = False
+            except ValueError:
+                print('Debe ingresar un número entero mayor o igual a uno')
+    else:
+        palitos_a_agregar = random.randint(1, 60)
+        print(f"Ingrese la cantidad de palitos a agregar: {palitos_a_agregar}")
 
     palitos_agregados: int = 0
     for fila in range(len(piramide) - 1, -1, -1):
@@ -190,7 +194,16 @@ def main() -> None:
     # piramide = [['|'], ['|', '|'], ['|', '|', '|']]
     # piramide2 = [[' '], ['|', '|'], ['|', '|', '|']]
     # piramide3 = [[' '], ['|', ' '], ['|', '|', '|']]
+    #jugadores: {list[dict[dict]]} = [
+    # {'0': {
+    #   palitos_retirados: 0,
+    #   pierde_turno: False,
+    #   es_maquina: False
+    #   }
+    # }]
 
+    jugadores: list[dict] = [{'palitos_retirados': 0, 'pierde_turno': False, 'es_maquina': False},
+                                {'palitos_retirados': 0, 'pierde_turno': False, 'es_maquina': True}]
     piramide: list[list[str]] = armar_piramide(13)
     imprimir_piramide(piramide)
 
@@ -203,7 +216,7 @@ def main() -> None:
     imprimir_piramide(piramide)
     reacomodar_palitos([[2, 2]], piramide_con_atributos, piramide)
     imprimir_piramide(piramide)
-    agregar_palitos(piramide_con_atributos, piramide)
+    agregar_palitos(piramide_con_atributos, piramide, jugadores[1])
 
     print(piramide_con_atributos)
 
