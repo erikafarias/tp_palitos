@@ -2,12 +2,12 @@ import random
 
 def crear_jugadores(cantidad_jugadores) -> list[dict]:
     jugadores: list[dict] = []
-    jugador: dict = {'palitos_retirados': 0, 'pierde_turno': False, 'es_maquina': False}
+    jugador: dict = {'palitos_retirados': 0, 'pierde_turno': False, 'es_maquina': True}
 
-    for i in range(cantidad_jugadores):
-        jugadores.append(jugador)
+    for i in range(cantidad_jugadores+1):
+        jugadores.append(jugador.copy())
 
-    jugadores[0]['es_maquina'] = True
+    jugadores[0]['es_maquina'] = False
 
     return jugadores
 
@@ -276,23 +276,23 @@ def main() -> None:
     #   }
     # }]
 
-    jugadores: list[dict] = [{'palitos_retirados': 0, 'pierde_turno': False, 'es_maquina': False},
-                             {'palitos_retirados': 0, 'pierde_turno': False, 'es_maquina': True}]
-    piramide: list[list[str]] = armar_piramide(13)
-    imprimir_piramide(piramide)
-
-    piramide_con_atributos: list[list[dict]] = definir_atributos_iniciales(piramide)
-    piramide_con_atributos = asignar_palitos_rojos(piramide_con_atributos, piramide)
-    print(piramide_con_atributos)
-    eliminar_palito(2, 2, piramide_con_atributos, piramide)
-    imprimir_piramide(piramide)
-    eliminar_palito(0, 1, piramide_con_atributos, piramide)
-    imprimir_piramide(piramide)
-    reacomodar_palitos([[2, 2]], piramide_con_atributos, piramide)
-    imprimir_piramide(piramide)
-    agregar_palitos(piramide_con_atributos, piramide, jugadores[1])
-
-    print(piramide_con_atributos)
+    # jugadores: list[dict] = [{'palitos_retirados': 0, 'pierde_turno': False, 'es_maquina': False},
+    #                          {'palitos_retirados': 0, 'pierde_turno': False, 'es_maquina': True}]
+    # piramide: list[list[str]] = armar_piramide(13)
+    # imprimir_piramide(piramide)
+    #
+    # piramide_con_atributos: list[list[dict]] = definir_atributos_iniciales(piramide)
+    # piramide_con_atributos = asignar_palitos_rojos(piramide_con_atributos, piramide)
+    # print(piramide_con_atributos)
+    # eliminar_palito(2, 2, piramide_con_atributos, piramide)
+    # imprimir_piramide(piramide)
+    # eliminar_palito(0, 1, piramide_con_atributos, piramide)
+    # imprimir_piramide(piramide)
+    # reacomodar_palitos([[2, 2]], piramide_con_atributos, piramide)
+    # imprimir_piramide(piramide)
+    # agregar_palitos(piramide_con_atributos, piramide, jugadores[1])
+    #
+    # print(piramide_con_atributos)
 
     ############################################################################
     piramide: list[list[str]] = []
@@ -310,11 +310,14 @@ def main() -> None:
             if cantidad_jugadores <= 0 or cantidad_jugadores > 8:
                 print('Debe seleccionar una cantidad de jugadores mayor o igual a 1 y menor o igual a 8')
             else:
-                opcion_invalida: False
+                opcion_invalida = False
         except ValueError:
             print('Debe ingresar un número entero, mayor o igual a 1 y menor o igual a 8')
 
     jugadores: list[dict] = crear_jugadores(cantidad_jugadores)
+    print(jugadores)
+
+    #TODO: Armar piramide preguntando si juega con cantidad minima o ingresa nuevo valor
 
 
 main()
