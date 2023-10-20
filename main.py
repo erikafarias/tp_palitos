@@ -1,6 +1,10 @@
 import random
 
 def crear_jugadores(cantidad_jugadores) -> list[dict]:
+    """
+        PRE: Recibe la cantidad de jugadores
+        POST: Arma los jugadores en una lista de diccionarios y la devuelve
+    """
     jugadores: list[dict] = []
     jugador: dict = {'palitos_retirados': 0, 'pierde_turno': False, 'es_maquina': True}
 
@@ -116,21 +120,47 @@ def asignar_palitos_rojos(piramide_con_atributos: list[list[dict]], piramide: li
     return piramide_con_atributos
 
 def jugar_turno(piramide_con_atributos: list[list[dict]], piramide: list[list[str]], jugador: dict) -> tuple[list[list[dict]], list[list[str]], dict]:
+    """
+        PRE: Recibe la pirámide, sus atributos y el jugador que va a jugar su turno
+        POST: Devuelve los mismos datos, con las modificaciones que se le hayan hecho durante el turno
+    """
+    piramide_con_atributos, piramide, jugador, palitos_eliminados = eliminar_palito(piramide_con_atributos, piramide, jugador)
+    piramide_con_atributos, piramide = reacomodar_palitos(palitos_eliminados, piramide_con_atributos, piramide)
 
 
 
+    return piramide_con_atributos, piramide, jugador
 
-def eliminar_palito(fila: int, columna: int, piramide_con_atributos: list[list[dict]],
-                    piramide: list[list[str]]) -> tuple[list[list[dict]], list[list[str]]]:
+
+
+def eliminar_palito(piramide_con_atributos: list[list[dict]],
+                    piramide: list[list[str]], jugador: dict) -> tuple[list[list[dict]], list[list[str]], dict, list[tuple[int]]]:
     """
         PRE: Recibe la pirámide, sus atributos y las coordenadas donde se quiere eliminar el palito
         POST: Devuelve un booleano que indica si se eliminó correctamente el palito
     """
+    fila: int = 0
+    columna: int = 0
+    palito_eliminado: list[tuple] = []
+
+    if not jugador['es_maquina']:
+        fila = int(input("Ingrese la fila donde se encuentra el palito a eliminar: "))
+        columna = int(input("Ingrese la columna donde se encuentra el palito a eliminar: "))
+    else:
+        invalido: bool = True
+        while invalido:
+            fila = random.randint(0, len(piramide)-1)
+            columna = random.randint(0, len(piramide[fila]-1))
+            if not piramide_con_atributos[fila][columna]['fue_eliminado']:
+                invalido = False
+
     try:
         if not piramide_con_atributos[fila][columna]['fue_eliminado']:
             if not piramide_con_atributos[fila][columna]['esta_congelado']:
                 piramide_con_atributos[fila][columna]['fue_eliminado'] = True
                 piramide[fila][columna] = ' '
+                jugador['palitos_retirados'] += 1
+                palito_eliminado.append((fila, columna))
             else:
                 print('No se puede eliminar el palito seleccionado, está congelado!')
         else:
@@ -138,10 +168,10 @@ def eliminar_palito(fila: int, columna: int, piramide_con_atributos: list[list[d
     except IndexError:
         print('La posición seleccionada no es válida.')
 
-    return piramide_con_atributos, piramide
+    return piramide_con_atributos, piramide, jugador, palito_eliminado
 
 
-def reacomodar_palitos(palitos_eliminados: list[list[int]], piramide_con_atributos: list[list[dict]],
+def reacomodar_palitos(palitos_eliminados: list[tuple[int]], piramide_con_atributos: list[list[dict]],
                        piramide: list[list[str]]) -> tuple[list[list[dict]], list[list[str]]]:
     """
         PRE: Recibe las coordenadas de los palitos eliminados, la pirámide y sus atributos
