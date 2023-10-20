@@ -115,6 +115,10 @@ def asignar_palitos_rojos(piramide_con_atributos: list[list[dict]], piramide: li
 
     return piramide_con_atributos
 
+def jugar_turno(piramide_con_atributos: list[list[dict]], piramide: list[list[str]], jugador: dict) -> tuple[list[list[dict]], list[list[str]], dict]:
+
+
+
 
 def eliminar_palito(fila: int, columna: int, piramide_con_atributos: list[list[dict]],
                     piramide: list[list[str]]) -> tuple[list[list[dict]], list[list[str]]]:
@@ -336,6 +340,29 @@ def main() -> None:
         piramide = armar_piramide(cantidad_palitos_inicial)
         imprimir_piramide(piramide)
         piramide_con_atributos = definir_atributos_iniciales(piramide)
+        piramide_con_atributos = asignar_palitos_rojos(piramide_con_atributos, piramide)
+        print(piramide_con_atributos)
+
+        seguir_jugando: bool = True
+
+        while(seguir_jugando):
+            for jugador in range(cantidad_jugadores):
+                piramide_con_atributos, piramide, jugadores[jugador] = jugar_turno(piramide_con_atributos,  piramide, jugadores[jugador])
+                if contar_palitos(piramide) == 0:
+                    print(f'Sacaste el último palito. El jugador {jugador} es el perdedor!')
+                    seguir_jugando = False
+
+        mayor_cantidad_palitos: int = 0
+        jugador_ganador: int = 0
+
+        for jugador in range(cantidad_jugadores):
+            print(f'El jugador {jugador} retiró {jugadores[jugador]["palitos_retirados"]}')
+            if jugadores[jugador]["palitos_retirados"] > mayor_cantidad_palitos:
+                mayor_cantidad_palitos = jugadores[jugador]["palitos_retirados"]
+                jugador_ganador = jugador
+        print(f'El jugador que más palitos retiró es el número {jugador_ganador} con {mayor_cantidad_palitos} palitos eliminados')
+        print('---------FIN DEL JUEGO-----------')
+
 
 
 
