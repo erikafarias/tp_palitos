@@ -141,7 +141,7 @@ def eliminar_palito(piramide_con_atributos: list[list[dict]],
     """
     fila: int = 0
     columna: int = 0
-    palito_eliminado: list[tuple] = []
+    palito_eliminado: list[tuple[int]] = []
 
     if not jugador['es_maquina']:
         fila = int(input("Ingrese la fila donde se encuentra el palito a eliminar: "))
