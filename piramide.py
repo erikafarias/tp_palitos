@@ -1,5 +1,5 @@
 import random
-
+from colored import Fore, Back, Style
 
 def crear_jugadores(cantidad_jugadores) -> list[dict]:
     """
@@ -7,9 +7,13 @@ def crear_jugadores(cantidad_jugadores) -> list[dict]:
         POST: Arma los jugadores en una lista de diccionarios y la devuelve
     """
     jugadores: list[dict] = []
-    jugador: dict = {'palitos_retirados': 0, 'pierde_turno': False, 'es_maquina': True}
+    jugador: dict = {'palitos_retirados': 0,
+                     'pierde_turno': False,
+                     'es_maquina': True
+                     }
 
     for i in range(cantidad_jugadores):
+        jugador['numero_jugador'] = i
         jugadores.append(jugador.copy())
 
     jugadores[0]['es_maquina'] = False
@@ -54,6 +58,7 @@ def imprimir_piramide(piramide: list[list[dict]]) -> None:
         PRE: Recibe la pirámide
         POST: Imprime la pirámide con palitos centrada
     """
+    #red = '\x1b[38;5;1m'
     for fila in range(len(piramide)):
         espacios_vacios: int = len(piramide) - len(piramide[fila])
         for espacio in range(espacios_vacios):
@@ -63,11 +68,11 @@ def imprimir_piramide(piramide: list[list[dict]]) -> None:
                 print(' ', end=' ')
             elif piramide[fila][palito]['esta_congelado']:
                 # TODO usar colored para pintar palitos congelados
-                print('|', end=' ')
+                print(f'{Fore.blue}|{Style.reset}', end=' ')
             elif piramide[fila][palito]['es_rojo']:
                 # TODO usar colored para pintar palitos rojos, ver si se puede modificar
                 # para mostrarlos solo cuando se los selecciona
-                print('|', end=' ')
+                print(f'{Fore.red}|{Style.reset}', end=' ')
             else:
                 print('|', end=' ')
         for espacio in range(espacios_vacios - 1):
@@ -148,7 +153,7 @@ def eliminar_palito(piramide: list[list[dict]], jugador: dict) -> tuple[list[lis
     return piramide, jugador, palito_eliminado
 
 
-def reacomodar_palitos(palitos_eliminados: list[tuple[int]], piramide: list[list[dict]]) -> list[list[dict]]:
+def reacomodar_palitos(palitos_eliminados: list[list[int]], piramide: list[list[dict]]) -> list[list[dict]]:
     """
         PRE: Recibe las coordenadas de los palitos eliminados y la pirámide
         POST: Devuelve la pirámide reacomodada. Los palitos que se mueven conservan sus atributos
@@ -234,7 +239,7 @@ def congelar_palitos(piramide: list[list[dict]]) -> list[list[dict]]:
     return piramide
 
 
-def eliminar_fila(piramide: list[list[dict]], jugador: dict) -> tuple(list[list[dict]], dict, list[list[int]]):
+def eliminar_fila(piramide: list[list[dict]], jugador: dict) -> tuple[list[list[dict]], dict, list[list[int]]]:
     """
         PRE: Recibe la pirámide a modificar
         POST: Luego de pedir un número de fila, elimina la misma y devuelve la pirámide modificada
@@ -281,13 +286,16 @@ def jugar_turno(piramide: list[list[dict]], jugador: dict, cantidad_palitos_inic
         PRE: Recibe la pirámide, sus atributos y el jugador que va a jugar su turno
         POST: Devuelve los mismos datos, con las modificaciones que se le hayan hecho durante el turno
     """
+
     cantidad_palitos_a_eliminar: int = 0
+    opcion_invalida: bool = True
     if not jugador['pierde_turno']:
         if not jugador['es_maquina']:
+            print(f"Es tu turno de jugar:")
             while opcion_invalida:
                 try:
                     cantidad_palitos_a_eliminar = int(input('Ingrese la cantidad de palitos que quiere eliminar. '
-                                                                 'Debe estar entre 1 y 3'))
+                                                                 'Debe estar entre 1 y 3: '))
                     if cantidad_palitos_a_eliminar < 1 or cantidad_palitos_a_eliminar > 3:
                         print('Debe seleccionar una cantidad de palitos a eliminar entre 1 y 3')
                     else:
@@ -295,19 +303,24 @@ def jugar_turno(piramide: list[list[dict]], jugador: dict, cantidad_palitos_inic
                 except ValueError:
                     print('Debe ingresar un número entero, entre 1 y 3')
         else:
+            print(f"Es turno del jugador Bot{jugador['numero_jugador']}")
             cantidad_palitos_a_eliminar = random.randint(1, 3)
 
 
+
+        palitos_eliminados: list[list[int]] = []
         evento_disparado: bool = False
-
         for palito in range(cantidad_palitos_a_eliminar):
-            palitos_eliminados: list[list[int]] = []
             piramide, jugador, palito_eliminado = eliminar_palito(piramide, jugador)
+            imprimir_piramide(piramide)
             palitos_eliminados.append(palito_eliminado)
+            print('Reacomodando palitos...')
             piramide = reacomodar_palitos(palitos_eliminados, piramide)
+            imprimir_piramide(piramide)
 
-            palitos_eliminados = []
+
             if not evento_disparado and piramide[palito_eliminado[0]][palito_eliminado[1]]['es_rojo']:
+                palitos_eliminados = []
                 evento: int = random.randint(1, 6)
                 print('Eliminaste un palito rojo! Se dispara evento al azar. Tirando dado...')
                 print(f'Te tocó el número {evento}. ', end='')
@@ -342,7 +355,7 @@ def jugar_turno(piramide: list[list[dict]], jugador: dict, cantidad_palitos_inic
         jugador['pierde_turno'] = False
 
     for fila in piramide:
-        for palito in piramide[fila]:
+        for palito in fila:
             if palito['contador_congelado'] != 0:
                 palito['contador_congelado'] -= 1
             else:
@@ -389,8 +402,8 @@ def main() -> None:
             print(f'Debe ingresar un número entero, mayor o igual a {cantidad_palitos_minima}')
 
         piramide = armar_piramide(cantidad_palitos_inicial)
-        imprimir_piramide(piramide)
         piramide = asignar_palitos_rojos(piramide)
+        imprimir_piramide(piramide)
 
         seguir_jugando: bool = True
 
