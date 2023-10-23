@@ -102,6 +102,17 @@ def obtener_posicion_palitos(piramide: list[list[dict]]) -> list[list[int]]:
 
     return palitos
 
+def contar_congelados(piramide: list[list[dict]]) -> int:
+    contador_congelados: int = 0
+    for fila in piramide:
+        for palito in fila:
+            if palito['esta_congelado']:
+                contador_congelados += 1
+
+    return contador_congelados
+
+
+
 
 def asignar_palitos_rojos(piramide: list[list[dict]]) -> list[list[dict]]:
     """
@@ -260,37 +271,41 @@ def eliminar_fila(piramide: list[list[dict]], jugador: dict) -> tuple[list[list[
     """
     fila: int = 0
     opcion_invalida: bool = True
-
-    if not jugador['es_maquina']:
-        while opcion_invalida:
-            try:
-                fila = int(input("Ingrese la fila que desea eliminar (comienza en cero): "))
-                contador: int = 0
-                for palito in piramide[fila]:
-                    if not palito['fue_eliminado'] and not palito['esta_congelado']:
-                        contador += 1
-                if contador < 1:
-                    print('La fila ingresada no es válida')
-                else:
-                    opcion_invalida = False
-
-            except ValueError:
-                print('Debe ingresar un número entero, mayor o igual a cero')
-    else:
-        fila = random.randint(0, len(piramide) - 1)
-        print(f"Ingrese la fila que desea eliminar (comienza en cero): {fila}")
-
     contador_eliminados: int = 0
     palitos_eliminados: list[list[int]] = []
-    for palito in range(len(piramide[fila])):
-        if not piramide[fila][palito]['esta_congelado']:
-            piramide[fila][palito]['fue_eliminado'] = True
-            palitos_eliminados.append([fila, palito])
-            contador_eliminados += 1
-        else:
-            print(f'El palito no se puede eliminar porque está congelado')
 
-    jugador['palitos_retirados'] += contador_eliminados
+    if contar_palitos(piramide) == contar_congelados(piramide):
+        print("Solo quedan palitos congelados! Se saltea turno")
+    else:
+        if not jugador['es_maquina']:
+            while opcion_invalida:
+                try:
+                    fila = int(input("Ingrese la fila que desea eliminar (comienza en cero): "))
+                    contador: int = 0
+                    for palito in piramide[fila]:
+                        if not palito['fue_eliminado'] and not palito['esta_congelado']:
+                            contador += 1
+                    if contador < 1:
+                        print('La fila ingresada no es válida')
+                    else:
+                        opcion_invalida = False
+
+                except ValueError:
+                    print('Debe ingresar un número entero, mayor o igual a cero')
+        else:
+            fila = random.randint(0, len(piramide) - 1)
+            print(f"Ingrese la fila que desea eliminar (comienza en cero): {fila}")
+
+
+        for palito in range(len(piramide[fila])):
+            if not piramide[fila][palito]['esta_congelado']:
+                piramide[fila][palito]['fue_eliminado'] = True
+                palitos_eliminados.append([fila, palito])
+                contador_eliminados += 1
+            else:
+                print(f'El palito no se puede eliminar porque está congelado')
+
+        jugador['palitos_retirados'] += contador_eliminados
 
     return piramide, jugador, palitos_eliminados
 
@@ -320,59 +335,61 @@ def jugar_turno(piramide: list[list[dict]], jugador: dict, cantidad_palitos_inic
             print(f"Es turno del jugador Bot{jugador['numero_jugador']}")
             cantidad_palitos_a_eliminar = random.randint(1, 3)
 
-
-
         palitos_eliminados: list[list[int]] = []
         evento_disparado: bool = False
         for palito in range(cantidad_palitos_a_eliminar):
-            piramide, jugador, palito_eliminado = eliminar_palito(piramide, jugador)
-            imprimir_piramide(piramide)
-            palitos_eliminados.append(palito_eliminado)
-            if contar_palitos(piramide) == 0:
-                if jugador['numero_jugador'] != 0:
-                    print(f"Sacaste el último palito. El jugador Bot{jugador['numero_jugador']} es el perdedor!")
-                else:
-                    print('Sacaste el último palito. Perdiste!')
-                    palito = cantidad_palitos_a_eliminar
+            if contar_palitos(piramide) == contar_congelados(piramide):
+                print("Solo quedan palitos congelados! Se saltea turno")
             else:
-                if not evento_disparado and piramide[palito_eliminado[0]][palito_eliminado[1]]['es_rojo']:
-                    evento: int = random.randint(1, 6)
-                    print('Eliminaste un palito rojo! Se dispara evento al azar. Tirando dado...')
-                    print(f'Te tocó el número {evento}. ', end='')
-                    print('Reacomodando palitos antes del evento...')
-                    piramide = reacomodar_palitos(palitos_eliminados, piramide)
-                    imprimir_piramide(piramide)
-                    palitos_eliminados = []
-                    if evento == 1:
-                        print('El jugador pierde un turno')
-                        jugador['pierde_turno'] = True
-                    elif evento == 2:
-                        print('Se dispara evento: "Agregar palitos"')
-                        piramide = agregar_palitos(piramide, jugador)
+                piramide, jugador, palito_eliminado = eliminar_palito(piramide, jugador)
+                imprimir_piramide(piramide)
+                palitos_eliminados.append(palito_eliminado)
+                if contar_palitos(piramide) == 0:
+                    if jugador['numero_jugador'] != 0:
+                        print(f"Sacaste el último palito. El jugador Bot{jugador['numero_jugador']} es el perdedor!")
+                    else:
+                        print('Sacaste el último palito. Perdiste!')
+                        palito = cantidad_palitos_a_eliminar
+                else:
+                    if not evento_disparado and piramide[palito_eliminado[0]][palito_eliminado[1]]['es_rojo']:
+                        evento: int = random.randint(1, 6)
+                        print('Eliminaste un palito rojo! Se dispara evento al azar. Tirando dado...')
+                        print(f'Te tocó el número {evento}. ', end='')
+                        print('Reacomodando palitos antes del evento...')
+                        piramide = reacomodar_palitos(palitos_eliminados, piramide)
                         imprimir_piramide(piramide)
-                    elif evento == 3:
-                        print('Se dispara evento: "Congelar palitos". Se congela el 20% de los palitos')
-                        piramide = congelar_palitos(piramide)
-                        imprimir_piramide(piramide)
-                    elif evento == 4:
-                        piramide, jugador, palitos_eliminados = eliminar_fila(piramide, jugador)
-                        imprimir_piramide(piramide)
+                        palitos_eliminados = []
+
+                        if evento == 1:
+                            print('El jugador pierde un turno')
+                            jugador['pierde_turno'] = True
+                        elif evento == 2:
+                            print('Se dispara evento: "Agregar palitos"')
+                            piramide = agregar_palitos(piramide, jugador)
+                            imprimir_piramide(piramide)
+                        elif evento == 3:
+                            print('Se dispara evento: "Congelar palitos". Se congela el 20% de los palitos')
+                            piramide = congelar_palitos(piramide)
+                            imprimir_piramide(piramide)
+                        elif evento == 4:
+                            piramide, jugador, palitos_eliminados = eliminar_fila(piramide, jugador)
+                            imprimir_piramide(piramide)
+                            print('Reacomodando palitos...')
+                            piramide = reacomodar_palitos(palitos_eliminados, piramide)
+                            imprimir_piramide(piramide)
+                        elif evento == 5:
+                            print('Armamos una nueva pirámide del tamaño de la original')
+                            piramide = armar_piramide(cantidad_palitos_inicial)
+                            piramide = asignar_palitos_rojos(piramide)
+                            imprimir_piramide(piramide)
+                        elif evento == 6:
+                            print('Safaste! No hace nada')
+
+                        evento_disparado = True
+                    else:
                         print('Reacomodando palitos...')
                         piramide = reacomodar_palitos(palitos_eliminados, piramide)
                         imprimir_piramide(piramide)
-                    elif evento == 5:
-                        print('Armamos una nueva pirámide del tamaño de la original')
-                        piramide = armar_piramide(cantidad_palitos_inicial)
-                        piramide = asignar_palitos_rojos(piramide)
-                        imprimir_piramide(piramide)
-                    elif evento == 6:
-                        print('Safaste! No hace nada')
-
-                    evento_disparado = True
-                else:
-                    print('Reacomodando palitos...')
-                    piramide = reacomodar_palitos(palitos_eliminados, piramide)
-                    imprimir_piramide(piramide)
     else:
         print('Se saltea turno por evento de la ronda anterior')
         jugador['pierde_turno'] = False
@@ -411,7 +428,7 @@ def main() -> None:
 
     continuar: bool = True
     while continuar:
-        cantidad_palitos_minima: int = round(((cantidad_jugadores + 2) * (cantidad_jugadores * 3)) / 2)
+        cantidad_palitos_minima = round(((cantidad_jugadores + 2) * (cantidad_jugadores * 3)) / 2)
         try:
             print(f'Puede jugar con la cantidad mínima de palitos o elegir una nueva. '
                   f'Si desea elegir la cantidad, ingrese el número deseado, el mismo se ajustará '
@@ -424,30 +441,30 @@ def main() -> None:
         except ValueError:
             print(f'Debe ingresar un número entero, mayor o igual a {cantidad_palitos_minima}')
 
-        piramide = armar_piramide(cantidad_palitos_inicial)
-        piramide = asignar_palitos_rojos(piramide)
-        imprimir_piramide(piramide)
+    piramide = armar_piramide(cantidad_palitos_inicial)
+    piramide = asignar_palitos_rojos(piramide)
+    imprimir_piramide(piramide)
 
-        seguir_jugando: bool = True
+    seguir_jugando: bool = True
 
-        while (seguir_jugando):
-            if contar_palitos(piramide) == 0:
-                seguir_jugando = False
-            else:
-                for jugador in range(cantidad_jugadores):
-                    piramide, jugadores[jugador] = jugar_turno(piramide, jugadores[jugador], cantidad_palitos_inicial)
+    while (seguir_jugando):
+        if contar_palitos(piramide) == 0:
+            seguir_jugando = False
+        else:
+            for jugador in range(cantidad_jugadores):
+                piramide, jugadores[jugador] = jugar_turno(piramide, jugadores[jugador], cantidad_palitos_inicial)
 
 
-        mayor_cantidad_palitos: int = 0
-        jugador_ganador: int = 0
+    mayor_cantidad_palitos: int = 0
+    jugador_ganador: int = 0
 
-        for jugador in range(cantidad_jugadores):
-            print(f'El jugador {jugador} retiró {jugadores[jugador]["palitos_retirados"]} palitos')
-            if jugadores[jugador]["palitos_retirados"] > mayor_cantidad_palitos:
-                mayor_cantidad_palitos = jugadores[jugador]["palitos_retirados"]
-                jugador_ganador = jugador
-        print(f'El jugador que más palitos retiró es el número {jugador_ganador} con {mayor_cantidad_palitos} palitos eliminados')
-        print('---------FIN DEL JUEGO-----------')
+    for jugador in range(cantidad_jugadores):
+        print(f'El jugador {jugador} retiró {jugadores[jugador]["palitos_retirados"]} palitos')
+        if jugadores[jugador]["palitos_retirados"] > mayor_cantidad_palitos:
+            mayor_cantidad_palitos = jugadores[jugador]["palitos_retirados"]
+            jugador_ganador = jugador
+    print(f'El jugador que más palitos retiró es el número {jugador_ganador} con {mayor_cantidad_palitos} palitos eliminados')
+    print('---------FIN DEL JUEGO-----------')
 
 
 main()
