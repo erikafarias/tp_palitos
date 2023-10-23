@@ -315,10 +315,13 @@ def eliminar_fila(piramide: list[list[dict]], jugador: dict) -> tuple[list[list[
     return piramide, jugador, palitos_eliminados
 
 def limpiar_consola() -> None:
-    if os.name == 'posix':  #Linux
-        os.system('clear')
-    elif os.name == 'nt':  #Windows
+    """
+    Método utilizado para limpiar la consola
+    """
+    if os.name == 'nt':  #Windows
         os.system('cls')
+    elif os.name == 'posix':  #Linux
+        os.system('clear')
 
 def jugar_turno(piramide: list[list[dict]], jugador: dict, cantidad_palitos_inicial: int) -> tuple[list[list[dict]], dict]:
     """
@@ -458,13 +461,14 @@ def main() -> None:
     seguir_jugando: bool = True
 
     while (seguir_jugando):
-        if contar_palitos(piramide) == 0:
-            seguir_jugando = False
-        else:
-            time.sleep(0)
+            #Espera 20 segundos antes de limpiar la consola y empezar la siguiente ronda
+            time.sleep(20)
             limpiar_consola()
             for jugador in range(cantidad_jugadores):
-                piramide, jugadores[jugador] = jugar_turno(piramide, jugadores[jugador], cantidad_palitos_inicial)
+                if contar_palitos(piramide) == 0:
+                    seguir_jugando = False
+                else:
+                    piramide, jugadores[jugador] = jugar_turno(piramide, jugadores[jugador], cantidad_palitos_inicial)
 
 
     mayor_cantidad_palitos: int = 0
