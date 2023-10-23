@@ -405,7 +405,7 @@ def jugar_turno(piramide: list[list[dict]], jugador: dict, cantidad_palitos_inic
                         piramide = reacomodar_palitos(palitos_eliminados, piramide)
                         imprimir_piramide(piramide)
     else:
-        print('Se saltea turno por evento de la ronda anterior')
+        print(f"Se saltea turno del jugador {jugador['numero_jugador']} por evento de la ronda anterior")
         jugador['pierde_turno'] = False
 
     for fila in piramide:
