@@ -152,7 +152,7 @@ def eliminar_palito(piramide: list[list[dict]], jugador: dict) -> tuple[list[lis
         if not jugador['es_maquina']:
             try:
                 fila = int(input("Ingrese la fila donde se encuentra el palito a eliminar: "))
-                columna = int(input("Ingrese la columna donde se encuentra el palito a eliminar: "))
+                columna = int(input("Ingrese la columna donde se encuentra el palito a eliminar (comienza en 0, incluye eliminados): "))
             except ValueError:
                 print('Debe ingresar un número entero')
         else:
@@ -189,11 +189,12 @@ def reacomodar_palitos(palitos_eliminados: list[list[int]], piramide: list[list[
     """
     for eliminado in palitos_eliminados:
         continuar: bool = True
+        eliminado_copia = eliminado
         for fila in range(len(piramide)):
             for palito in range(len(piramide[fila])):
                 if not piramide[fila][palito]['fue_eliminado'] and fila <= eliminado[0] and continuar:
                     # Relleno lugar del palito eliminado, también copio los atributos con los valores del nuevo palito
-                    piramide[eliminado[0]][eliminado[1]] = piramide[fila][palito].copy()
+                    piramide[eliminado_copia[0]][eliminado_copia[1]] = piramide[fila][palito].copy()
                     # Elimino el palito superior.
                     piramide[fila][palito]['es_rojo'] = False
                     piramide[fila][palito]['esta_congelado'] = False
