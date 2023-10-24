@@ -280,7 +280,7 @@ def eliminar_fila(piramide: list[list[dict]], jugador: dict) -> tuple[list[list[
     contador_eliminados: int = 0
     palitos_eliminados: list[list[int]] = []
 
-    if contar_palitos(piramide) == contar_congelados(piramide):
+    if contar_palitos(piramide) == contar_congelados(piramide) and contar_palitos(piramide) != 0:
         print("Solo quedan palitos congelados! Se saltea turno")
     else:
         if not jugador['es_maquina']:
@@ -354,7 +354,7 @@ def jugar_turno(piramide: list[list[dict]], jugador: dict, cantidad_palitos_inic
         palitos_eliminados: list[list[int]] = []
         evento_disparado: bool = False
         for palito in range(cantidad_palitos_a_eliminar):
-            if contar_palitos(piramide) == contar_congelados(piramide):
+            if contar_palitos(piramide) == contar_congelados(piramide) and contar_palitos(piramide) != 0:
                 print("Solo quedan palitos congelados! Se saltea turno")
                 palito = cantidad_palitos_a_eliminar
             else:
