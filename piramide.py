@@ -189,7 +189,7 @@ def reacomodar_palitos(palitos_eliminados: list[list[int]], piramide: list[list[
     """
     for eliminado in palitos_eliminados:
         continuar: bool = True
-        eliminado_copia = eliminado
+        eliminado_copia: list[int] = eliminado.copy()
         for fila in range(len(piramide)):
             for palito in range(len(piramide[fila])):
                 if not piramide[fila][palito]['fue_eliminado'] and fila <= eliminado[0] and continuar:
@@ -356,6 +356,7 @@ def jugar_turno(piramide: list[list[dict]], jugador: dict, cantidad_palitos_inic
             if contar_palitos(piramide) == contar_congelados(piramide):
                 print("Solo quedan palitos congelados! Se saltea turno")
             else:
+                palitos_eliminados = []
                 piramide, jugador, palito_eliminado = eliminar_palito(piramide, jugador)
                 imprimir_piramide(piramide)
                 palitos_eliminados.append(palito_eliminado)
