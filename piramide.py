@@ -227,7 +227,7 @@ def agregar_palitos(piramide: list[list[dict]], jugador: dict) -> list[list[dict
             except ValueError:
                 print('Debe ingresar un número entero mayor o igual a uno')
     else:
-        palitos_a_agregar = random.randint(1, 60)
+        palitos_a_agregar = random.randint(1, 15)
         print(f"Ingrese la cantidad de palitos a agregar: {palitos_a_agregar}")
 
     palitos_agregados: int = 0
