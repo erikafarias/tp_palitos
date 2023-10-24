@@ -261,10 +261,11 @@ def congelar_palitos(piramide: list[list[dict]]) -> list[list[dict]]:
     contador_palitos: int = 0
     for fila in range(len(piramide)):
         for palito in range(len(piramide[fila])):
-            contador_palitos += 1
-            if contador_palitos in palitos_congelados:
-                piramide[fila][palito]['esta_congelado'] = True
-                piramide[fila][palito]['contador_congelado'] += 3
+            if not  piramide[fila][palito]['fue_eliminado']:
+                contador_palitos += 1
+                if contador_palitos in palitos_congelados:
+                    piramide[fila][palito]['esta_congelado'] = True
+                    piramide[fila][palito]['contador_congelado'] += 3
 
     return piramide
 
@@ -469,7 +470,7 @@ def main() -> None:
             #Espera 20 segundos antes de limpiar la consola y empezar la siguiente ronda
             print('Iniciando ronda...')
             time.sleep(15)
-            limpiar_consola() #No está funcionando en el IDE Pycharm
+            limpiar_consola() #No está funcionando
             for jugador in range(cantidad_jugadores):
                 if contar_palitos(piramide) == 0:
                     seguir_jugando = False
