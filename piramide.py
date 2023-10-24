@@ -1,5 +1,5 @@
 import random
-from colored import Fore, Back, Style
+from colored import Fore, Back, Style #pip install colored
 import os
 import time
 
@@ -284,7 +284,7 @@ def eliminar_fila(piramide: list[list[dict]], jugador: dict) -> tuple[list[list[
         if not jugador['es_maquina']:
             while opcion_invalida:
                 try:
-                    fila = int(input("Ingrese la fila que desea eliminar (comienza en cero): "))
+                    fila = int(input("Ingrese la fila que desea eliminar: "))
                     contador: int = 0
                     for palito in piramide[fila]:
                         if not palito['fue_eliminado'] and not palito['esta_congelado']:
@@ -320,7 +320,7 @@ def limpiar_consola() -> None:
     """
     if os.name == 'nt':  #Windows
         os.system('cls')
-    elif os.name == 'posix':  #Linux
+    else:  #Linux
         os.system('clear')
 
 def jugar_turno(piramide: list[list[dict]], jugador: dict, cantidad_palitos_inicial: int) -> tuple[list[list[dict]], dict]:
@@ -363,6 +363,7 @@ def jugar_turno(piramide: list[list[dict]], jugador: dict, cantidad_palitos_inic
                         print(f"Sacaste el último palito. El jugador Bot{jugador['numero_jugador']} es el perdedor!")
                     else:
                         print('Sacaste el último palito. Perdiste!')
+                        #Salida del bucle
                         palito = cantidad_palitos_a_eliminar
                 else:
                     if not evento_disparado and piramide[palito_eliminado[0]][palito_eliminado[1]]['es_rojo']:
@@ -433,6 +434,7 @@ def main() -> None:
             if cantidad_jugadores <= 0 or cantidad_jugadores > 8:
                 print('Debe seleccionar una cantidad de jugadores mayor o igual a 1 y menor o igual a 8')
             else:
+                print('Tu número de jugador es el 0')
                 opcion_invalida = False
         except ValueError:
             print('Debe ingresar un número entero, mayor o igual a 1 y menor o igual a 8')
@@ -441,7 +443,7 @@ def main() -> None:
 
     continuar: bool = True
     while continuar:
-        cantidad_palitos_minima = round(((cantidad_jugadores + 2) * (cantidad_jugadores * 3)) / 2)
+        cantidad_palitos_minima = round(((cantidad_jugadores + 2) * (cantidad_jugadores + 3)) / 2)
         try:
             print(f'Puede jugar con la cantidad mínima de palitos o elegir una nueva. '
                   f'Si desea elegir la cantidad, ingrese el número deseado, el mismo se ajustará '
@@ -463,7 +465,7 @@ def main() -> None:
     while (seguir_jugando):
             #Espera 20 segundos antes de limpiar la consola y empezar la siguiente ronda
             time.sleep(20)
-            limpiar_consola()
+            limpiar_consola() #No está funcionando en el IDE Pycharm
             for jugador in range(cantidad_jugadores):
                 if contar_palitos(piramide) == 0:
                     seguir_jugando = False
