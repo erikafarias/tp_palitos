@@ -69,10 +69,10 @@ def imprimir_piramide(piramide: list[list[dict]]) -> None:
         for palito in range(len(piramide[fila])):
             if piramide[fila][palito]['fue_eliminado']:
                 print(' ', end=' ')
-            elif piramide[fila][palito]['esta_congelado']:
-                print(f'{Fore.blue}|{Style.reset}', end=' ')
             elif piramide[fila][palito]['es_rojo']:
                 print(f'{Fore.red}|{Style.reset}', end=' ')
+            elif piramide[fila][palito]['esta_congelado']:
+                print(f'{Fore.blue}|{Style.reset}', end=' ')
             else:
                 print('|', end=' ')
         for espacio in range(espacios_vacios - 1):
@@ -355,6 +355,7 @@ def jugar_turno(piramide: list[list[dict]], jugador: dict, cantidad_palitos_inic
         for palito in range(cantidad_palitos_a_eliminar):
             if contar_palitos(piramide) == contar_congelados(piramide):
                 print("Solo quedan palitos congelados! Se saltea turno")
+                palito = cantidad_palitos_a_eliminar
             else:
                 palitos_eliminados = []
                 piramide, jugador, palito_eliminado = eliminar_palito(piramide, jugador)
