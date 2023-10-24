@@ -464,7 +464,8 @@ def main() -> None:
 
     while (seguir_jugando):
             #Espera 20 segundos antes de limpiar la consola y empezar la siguiente ronda
-            time.sleep(20)
+            print('Iniciando ronda...')
+            time.sleep(15)
             limpiar_consola() #No está funcionando en el IDE Pycharm
             for jugador in range(cantidad_jugadores):
                 if contar_palitos(piramide) == 0:
